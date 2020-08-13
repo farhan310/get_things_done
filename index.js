@@ -4,7 +4,7 @@ const express = require('express');
 const pg = require('pg');
 
 const app = express();
-const db = new pg.Pool();
+const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
 db.query(`
   CREATE TABLE IF NOT EXISTS tasks(
