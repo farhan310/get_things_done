@@ -18,6 +18,7 @@ app.get('/tasks', (_request, response) => {
 
 // Create a new task
 app.post('/tasks', (request, response) => {
+  // same as const description = request.body.description
   const { description } = request.body;
   if (!description) {
     response.status(406).json({ error: 'description required' });
