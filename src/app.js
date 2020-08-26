@@ -38,6 +38,44 @@ const App = () => {
     setIsModalOpen(false);
   };
 
+  const handleDeleteClick = async (taskId) => {
+    const didConfirm = window.confirm("Are you sure?");
+    if (didConfirm) {
+      const url = `/tasks/${taskId}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      if (response.ok) {
+        setTasks(tasks.filter((task) => task.id !== taskId));
+      }
+    }
+  };
+
+  const handleCheckboxClick = async (taskId, isCompleted) => {
+    const url = `/tasks/${taskId}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ completed: !isCompleted }),
+    });
+    const updatedTask = await response.json();
+    const updatedTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return updatedTask;
+      } else {
+        return task;
+      }
+    });
+    setTasks(updatedTasks);
+  };
+
   React.useEffect(() => {
     fetchTasks();
   }, []);
@@ -66,6 +104,10 @@ const App = () => {
               id={task.id}
               description={task.description}
               completed={task.completed}
+              handleDeleteClick={() => handleDeleteClick(task.id)}
+              handleCheckboxClick={() =>
+                handleCheckboxClick(task.id, task.completed)
+              }
             />
           ))}
         </ul>
