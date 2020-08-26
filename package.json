@@ -11,9 +11,13 @@
     "react-dom": "^16.13.1"
   },
   "scripts": {
-    "start": "parcel build src/index.html && node index.js"
+    "start": "parcel build src/index.html && node index.js",
+    "dev": "parcel watch src/index.html & node index.js"
   },
   "devDependencies": {
     "parcel": "^1.12.4"
-  }
+  },
+  "browserslist": [
+    ">= 2%"
+  ]
 }
