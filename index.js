@@ -1,7 +1,7 @@
 const PORT = process.env.PORT || 3000;
 
-const express = require('express');
-const pg = require('pg');
+const express = require("express");
+const pg = require("pg");
 
 const app = express();
 const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
@@ -15,20 +15,20 @@ db.query(`
 `);
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static("dist"));
 
 // Get the user a list of all the tasks
-app.get('/tasks', async (_request, response) => {
+app.get("/tasks", async (_request, response) => {
   const result = await db.query(`SELECT * FROM tasks ORDER BY id DESC;`);
   response.json(result.rows);
 });
 
 // Create a new task
-app.post('/tasks', async (request, response) => {
+app.post("/tasks", async (request, response) => {
   // same as const description = request.body.description
   const { description } = request.body; // "Buy milk", for example
   if (!description) {
-    response.status(406).json({ error: 'description required' });
+    response.status(406).json({ error: "description required" });
   } else {
     const result = await db.query(
       `INSERT INTO tasks (description) VALUES ($1) RETURNING *;`,
@@ -39,12 +39,12 @@ app.post('/tasks', async (request, response) => {
 });
 
 // Update something about a specific task
-app.patch('/tasks/:id', async (request, response) => {
+app.patch("/tasks/:id", async (request, response) => {
   const taskId = Number(request.params.id);
   const [column, value] = Object.entries(request.body)[0];
-  const approvedColumns = ['description', 'completed'];
+  const approvedColumns = ["description", "completed"];
   if (!approvedColumns.includes(column)) {
-    return response.status(406).json({ error: 'DO NOT HACK US' });
+    return response.status(406).json({ error: "DO NOT HACK US" });
   }
   const result = await db.query(
     `UPDATE tasks SET ${column} = $1 WHERE id = $2 RETURNING *;`,
@@ -53,12 +53,12 @@ app.patch('/tasks/:id', async (request, response) => {
   if (result.rows.length > 0) {
     response.json(result.rows[0]);
   } else {
-    response.status(404).json({ error: 'no such task' });
+    response.status(404).json({ error: "no such task" });
   }
 });
 
 // Delete a specific task
-app.delete('/tasks/:id', async (request, response) => {
+app.delete("/tasks/:id", async (request, response) => {
   const taskId = Number(request.params.id);
   const result = await db.query(
     `DELETE FROM tasks WHERE id = $1 RETURNING *;`,
@@ -67,7 +67,7 @@ app.delete('/tasks/:id', async (request, response) => {
   if (result.rows.length > 0) {
     response.json(result.rows[0]);
   } else {
-    response.status(404).json({ error: 'no such task' });
+    response.status(404).json({ error: "no such task" });
   }
 });
 
