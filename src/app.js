@@ -1,11 +1,11 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import Task from "./components/Task";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Task from './components/Task';
 
 const App = () => {
   const [tasks, setTasks] = React.useState([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [taskDescription, setTaskDescription] = React.useState("");
+  const [taskDescription, setTaskDescription] = React.useState('');
 
   const fetchTasks = async () => {
     const url = `/tasks`;
@@ -14,43 +14,43 @@ const App = () => {
     setTasks(data);
   };
 
-  const handleModalClick = (event) => {
-    const wasTheClickOutsideTheForm = !event.target.closest("form");
+  const handleModalClick = event => {
+    const wasTheClickOutsideTheForm = !event.target.closest('form');
     if (wasTheClickOutsideTheForm) {
       setIsModalOpen(false);
     }
   };
 
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = async event => {
     event.preventDefault();
     const url = `/tasks`;
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify({ description: taskDescription }),
     });
     const newTask = await response.json();
     setTasks([newTask, ...tasks]);
-    setTaskDescription("");
+    setTaskDescription('');
     setIsModalOpen(false);
   };
 
-  const handleDeleteClick = async (taskId) => {
-    const didConfirm = window.confirm("Are you sure?");
+  const handleDeleteClick = async taskId => {
+    const didConfirm = window.confirm('Are you sure?');
     if (didConfirm) {
       const url = `/tasks/${taskId}`;
       const response = await fetch(url, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
       });
       if (response.ok) {
-        setTasks(tasks.filter((task) => task.id !== taskId));
+        setTasks(tasks.filter(task => task.id !== taskId));
       }
     }
   };
@@ -58,22 +58,35 @@ const App = () => {
   const handleCheckboxClick = async (taskId, isCompleted) => {
     const url = `/tasks/${taskId}`;
     const response = await fetch(url, {
-      method: "PATCH",
+      method: 'PATCH',
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify({ completed: !isCompleted }),
     });
     const updatedTask = await response.json();
-    const updatedTasks = tasks.map((task) => {
+    const updatedTasks = tasks.map(task => {
       if (task.id === taskId) {
         return updatedTask;
-      } else {
-        return task;
       }
+      return task;
     });
     setTasks(updatedTasks);
+  };
+
+  const handleDescriptionChange = async (taskId, isDescriptionChanged) => {
+    fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ description: isDescriptionChanged }),
+    });
+    const updatedTask = await response.json();
+    setTasks([updatedTask, ...tasks]);
+    setTaskDescription('');
   };
 
   React.useEffect(() => {
@@ -98,13 +111,14 @@ const App = () => {
           </div>
         </section>
         <ul id="tasks-list">
-          {tasks.map((task) => (
+          {tasks.map(task => (
             <Task
               key={task.id}
               id={task.id}
               description={task.description}
               completed={task.completed}
               handleDeleteClick={() => handleDeleteClick(task.id)}
+              handleDescriptionChange={() => handleDescriptionChange(task.id)}
               handleCheckboxClick={() =>
                 handleCheckboxClick(task.id, task.completed)
               }
@@ -125,7 +139,7 @@ const App = () => {
               type="text"
               autoComplete="off"
               value={taskDescription}
-              onChange={(event) => setTaskDescription(event.target.value)}
+              onChange={event => setTaskDescription(event.target.value)}
               required
             />
           </div>
@@ -136,4 +150,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.querySelector("#root"));
+ReactDOM.render(<App />, document.querySelector('#root'));
