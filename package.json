@@ -19,5 +19,6 @@
   },
   "browserslist": [
     ">= 2%"
-  ]
+  ],
+  "repository": "https://github.com/rbi-learning/get_things_done.git"
 }
